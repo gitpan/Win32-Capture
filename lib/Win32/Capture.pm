@@ -7,7 +7,7 @@ our @EXPORT = qw(CaptureScreen CaptureRect CaptureWindow CaptureWindowRect IsWin
 use Win32::API;
 use Win32::GUI::DIBitmap;
 
-$VERSION = '1.0';
+$VERSION = '1.1';
 
 BEGIN {
 $GetDC                 = new Win32::API('user32','GetDC',['N'],'N');
@@ -28,13 +28,13 @@ return $IsWindowVisible->Call($_[0]);
 
 sub CaptureScreen() {
 my $dc  = $GetDC->Call(0);
-my $dib = newFromDC Win32::GUI::DIBitmap ($dc) or die "newFromDC";
+my $dib = newFromDC Win32::GUI::DIBitmap ($dc) or return undef;
 return $dib;
 }
 
 sub CaptureRect($$$$) {
 my $dc  = $GetDC->Call(0);
-my $dib = newFromDC Win32::GUI::DIBitmap ($dc,$_[0],$_[1],$_[2],$_[3]) or die "newFromDC";
+my $dib = newFromDC Win32::GUI::DIBitmap ($dc,$_[0],$_[1],$_[2],$_[3]) or return undef;
 return $dib;
 }
 
@@ -42,7 +42,7 @@ sub CaptureWindow($$$) {
 my $win = $_[0];
 $SetForegroundWindow->Call($win);
 sleep $_[1];
-my $dib = newFromWindow Win32::GUI::DIBitmap ($win,$_[2]) or die "newFromWindow";
+my $dib = newFromWindow Win32::GUI::DIBitmap ($win,$_[2]) or return undef;
 return $dib;
 }
 
@@ -51,7 +51,7 @@ my $win = $_[0];
 $SetForegroundWindow->Call($win);
 sleep $_[1];
 my $dc  = $GetDC->Call($win);
-my $dib = newFromDC Win32::GUI::DIBitmap ($dc,$_[2],$_[3],$_[4],$_[5]) or die "newFromDC";
+my $dib = newFromDC Win32::GUI::DIBitmap ($dc,$_[2],$_[3],$_[4],$_[5]) or return undef;
 return $dib;
 }
 
