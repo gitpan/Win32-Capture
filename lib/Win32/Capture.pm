@@ -7,7 +7,7 @@ our @EXPORT = qw(CaptureScreen CaptureRect CaptureWindow CaptureWindowRect IsWin
 use Win32::API;
 use Win32::GUI::DIBitmap;
 
-$VERSION = '1.1';
+$VERSION = '1.2';
 
 BEGIN {
 $GetDC                 = new Win32::API('user32','GetDC',['N'],'N');
@@ -236,18 +236,9 @@ http://msdn.microsoft.com/library
 
 =back
 
-=head1 INSTALL With ActiveState PPM
-
-   ppm install http://kenwu.idv.tw/Win32-Capture.ppd
-
 =head1 AUTHOR
 
 Lilo Huang
-
-kenwu@cpan.org
-
-http://blog.yam.com/kenwu/
-
 
 =head1 COPYRIGHT AND LICENSE
 
