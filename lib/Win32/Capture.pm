@@ -7,7 +7,7 @@ our @EXPORT = qw(CaptureScreen CaptureRect CaptureWindow CaptureWindowRect IsWin
 use Win32::API;
 use Win32::GUI::DIBitmap;
 
-$VERSION = '1.3';
+$VERSION = '1.4';
 
 BEGIN {
     $GetDC                 = new Win32::API('user32', 'GetDC', ['N'], 'N');
@@ -118,7 +118,7 @@ __END__
 
 =head1 NAME
 
-Win32::Capture - Capature screen and manipulate it with Win32::GUI::DIBitmap.
+Win32::Capture - Capture screen and manipulate it with Win32::GUI::DIBitmap.
 
 =head1 SYNOPSIS
 
@@ -127,12 +127,12 @@ Win32::Capture - Capature screen and manipulate it with Win32::GUI::DIBitmap.
   $image = CaptureScreen(); # Capture whole screen.
   $image->SaveToFile('screenshot.png');
 
-  #or
+  # or
 
   $image = CaptureRect($x, $y, $width, $height); # Capture a portion of window.
   $image->SaveToFile('screenshot.png');
 
-  #or
+  # or
 
   @WIN = FindWindowLike('CPAN'); # Find the HWND to be captured.
 
@@ -171,10 +171,10 @@ Capture whole screen include taskbar.
 
 Capture whole window include title and border parts, or client window region only.
 
-TIPS: Use FindWindowLike to find the HWND.
+TIPS: Use FindWindowLike helper function to find $HWND value.
 
   $flag = 0 : Entire window will be captured (with border)
-  $flag = 1 : Only the client window region will be captured.
+  $flag = 1 : Only client window region will be captured.
 
 =item CaptureWindowRect($HWND, $sleepTime, $x, $y, $width, $height)
 
