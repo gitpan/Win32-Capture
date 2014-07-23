@@ -3,7 +3,7 @@ Before Install
 Win32::API and Win32::GUI::DIBitmap are required. If you don't have these modules, install them via ppm of console window,
 
 ppm install http://www.bribes.org/perl/ppm/Win32-API.ppd
-ppm install http://www.bribes.org/perl/ppm/Win32::GUI::DIBitmap.ppd
+ppm install http://www.bribes.org/perl/ppm/Win32-GUI.ppd
 
 INSTALL
 

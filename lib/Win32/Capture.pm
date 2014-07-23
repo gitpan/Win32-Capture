@@ -7,7 +7,7 @@ our @EXPORT = qw(CaptureScreen CaptureRect CaptureWindow CaptureWindowRect IsWin
 use Win32::API;
 use Win32::GUI::DIBitmap;
 
-$VERSION = '1.5';
+$VERSION = '1.6';
 
 BEGIN {
     $GetDC                 = new Win32::API('user32', 'GetDC', ['N'], 'N');
