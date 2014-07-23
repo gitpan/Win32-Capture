@@ -7,70 +7,70 @@ our @EXPORT = qw(CaptureScreen CaptureRect CaptureWindow CaptureWindowRect IsWin
 use Win32::API;
 use Win32::GUI::DIBitmap;
 
-$VERSION = '1.2';
+$VERSION = '1.3';
 
 BEGIN {
-$GetDC                 = new Win32::API('user32','GetDC',['N'],'N');
-$GetTopWindow          = new Win32::API('user32','GetTopWindow',['N'],'N');
-$FindWindow            = new Win32::API('user32','FindWindow',['P','P'],'N');
-$GetWindow             = new Win32::API('user32','GetWindow', ['N', 'N'], 'N');
-$GetDesktopWindow      = new Win32::API('user32','GetDesktopWindow', [], 'N');
-$GetClassName          = new Win32::API('user32','GetClassName', ['N', 'P', 'N'], 'N');
-$GetWindowText         = new Win32::API('user32','GetWindowText', ['N', 'P', 'N'], 'N');
-$GetWindowRect         = new Win32::API('user32','GetWindowRect', ['N', 'P'], 'N');
-$SetForegroundWindow   = new Win32::API('user32','SetForegroundWindow', ['N'], 'N');
-$IsWindowVisible       = new Win32::API('user32','IsWindowVisible', ['N'], 'N');
+    $GetDC                 = new Win32::API('user32', 'GetDC', ['N'], 'N');
+    $GetTopWindow          = new Win32::API('user32', 'GetTopWindow', ['N'], 'N');
+    $FindWindow            = new Win32::API('user32', 'FindWindow', ['P', 'P'], 'N');
+    $GetWindow             = new Win32::API('user32', 'GetWindow', ['N', 'N'], 'N');
+    $GetDesktopWindow      = new Win32::API('user32', 'GetDesktopWindow', [], 'N');
+    $GetClassName          = new Win32::API('user32', 'GetClassName', ['N', 'P', 'N'], 'N');
+    $GetWindowText         = new Win32::API('user32', 'GetWindowText', ['N', 'P', 'N'], 'N');
+    $GetWindowRect         = new Win32::API('user32', 'GetWindowRect', ['N', 'P'], 'N');
+    $SetForegroundWindow   = new Win32::API('user32', 'SetForegroundWindow', ['N'], 'N');
+    $IsWindowVisible       = new Win32::API('user32', 'IsWindowVisible', ['N'], 'N');
 }
 
 sub IsWindowVisible {
-return $IsWindowVisible->Call($_[0]);
+    return $IsWindowVisible->Call($_[0]);
 }
 
 sub CaptureScreen() {
-my $dc  = $GetDC->Call(0);
-my $dib = newFromDC Win32::GUI::DIBitmap ($dc) or return undef;
-return $dib;
+    my $dc  = $GetDC->Call(0);
+    my $dib = newFromDC Win32::GUI::DIBitmap($dc) or return undef;
+    return $dib;
 }
 
 sub CaptureRect($$$$) {
-my $dc  = $GetDC->Call(0);
-my $dib = newFromDC Win32::GUI::DIBitmap ($dc,$_[0],$_[1],$_[2],$_[3]) or return undef;
-return $dib;
+    my $dc  = $GetDC->Call(0);
+    my $dib = newFromDC Win32::GUI::DIBitmap($dc, $_[0], $_[1], $_[2], $_[3]) or return undef;
+    return $dib;
 }
 
 sub CaptureWindow($$$) {
-my $win = $_[0];
-$SetForegroundWindow->Call($win);
-sleep $_[1];
-my $dib = newFromWindow Win32::GUI::DIBitmap ($win,$_[2]) or return undef;
-return $dib;
+    my $win = $_[0];
+    $SetForegroundWindow->Call($win);
+    sleep $_[1];
+    my $dib = newFromWindow Win32::GUI::DIBitmap($win, $_[2]) or return undef;
+    return $dib;
 }
 
 sub CaptureWindowRect($$$$$$) {
-my $win = $_[0];
-$SetForegroundWindow->Call($win);
-sleep $_[1];
-my $dc  = $GetDC->Call($win);
-my $dib = newFromDC Win32::GUI::DIBitmap ($dc,$_[2],$_[3],$_[4],$_[5]) or return undef;
-return $dib;
+    my $win = $_[0];
+    $SetForegroundWindow->Call($win);
+    sleep $_[1];
+    my $dc  = $GetDC->Call($win);
+    my $dib = newFromDC Win32::GUI::DIBitmap($dc, $_[2], $_[3], $_[4], $_[5]) or return undef;
+    return $dib;
 }
 
 
 sub FindWindowLike {
-my $pattern = shift;
-my @array=();
-my $parent = $GetDesktopWindow->Call();
-my $hwnd = $GetWindow->Call($parent, 5);
+    my $pattern = shift;
+    my @array=();
+    my $parent = $GetDesktopWindow->Call();
+    my $hwnd = $GetWindow->Call($parent, 5);
 
-while($hwnd) {
-       my $windowname = SearchWindowText($hwnd,$pattern);
-           if($windowname ne '') {
-               push(@array,$hwnd);
-           }
-       $hwnd = $GetWindow->Call($hwnd, 2);
-}
+    while($hwnd) {
+        my $windowname = SearchWindowText($hwnd, $pattern);
+        if ($windowname ne '') {
+            push(@array, $hwnd);
+        }
+        $hwnd = $GetWindow->Call($hwnd, 2);
+    }
 
-return @array;
+    return @array;
 }
 
 sub SearchWindowText {
@@ -80,9 +80,9 @@ sub SearchWindowText {
     my $titleLen = 1024;
     my $result = $GetWindowText->Call($hwnd, $title, $titleLen);
     $title=~s/\s+$//;
-    if($title=~/\Q$pattern\E/i) {
+    if ($title=~/\Q$pattern\E/i) {
         return $title;
-    }else{
+    } else {
         return '';
     }
 }
@@ -118,102 +118,90 @@ __END__
 
 =head1 NAME
 
-Win32::Capture - Capature Win32 screen with lightweight Win32::GUI::DIBitmap.
+Win32::Capture - Capature screen and manipulate it with Win32::GUI::DIBitmap.
 
 =head1 SYNOPSIS
 
   use Win32::Capture;
 
-
-  $image = CaptureScreen(); # Capture Whole screen.
+  $image = CaptureScreen(); # Capture whole screen.
   $image->SaveToFile('screenshot.png');
 
   #or
 
-  $image = CaptureRect( $x, $y, $width, $height ); # Capture a part of window.
+  $image = CaptureRect($x, $y, $width, $height); # Capture a portion of window.
   $image->SaveToFile('screenshot.png');
 
   #or
 
   @WIN = FindWindowLike('CPAN'); # Find the HWND to be captured.
 
-  if($#WIN<0) {
+  if ($#WIN<0) {
        print "Not found";
-  }else{
-        foreach(@WIN) {
-            my $image = CaptureWindowRect($_,2,0,0,400,300);
-            $image->SaveToFile("$_.jpg",JPEG_QUALITYSUPERB);
+  } else {
+        foreach (@WIN) {
+            my $image = CaptureWindowRect($_, 2, 0, 0, 400, 300);
+            $image->SaveToFile("$_.jpg", JPEG_QUALITYSUPERB);
         }
   }
 
 =head1 DESCRIPTION
 
-The package is similar to L<Win32::Screenshot|Win32::Screenshot>, also using Win32 API function,
-but with Image Process in L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap>
-to let you capture the screen, a window or a part of it. The
-C<Capture*(...)> functions returns a new L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap> object which
-you can easily use to modify the screenshot or to store it in the
-file.
-
+The functions of package are similar to L<Win32::Screenshot|Win32::Screenshot>.
+But you can manipulate screen shot image with L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap>
 
 =head2 Screen capture functions
 
-All these functions return a new L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap> object
-on success or undef on failure. These function are exported by default.
+All of these functions are returning a new L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap> instance
+on success or undef on failure. These functions are exported by default.
 
 =over 8
 
-=item CaptureRect( $x, $y, $width, $height )
+=item CaptureRect($x, $y, $width, $height)
 
-Captures part of the screen. The [0, 0] coordinate is the upper-left
+Capture a portion of the screen. The [0, 0] coordinate is on the upper-left
 corner of the screen. The [$x, $y] defines the the upper-left corner
 of the rectangle to be captured.
 
-=item CaptureScreen( )
+=item CaptureScreen()
 
-Captures whole screen including the taskbar.
+Capture whole screen include taskbar.
 
-=item CaptureWindow( $HWND , $sec , $flag )
+=item CaptureWindow($HWND, $sleepTime, $flag)
 
-Captures whole window including title and border or only for Client Window.
-The second parameter is how many time wait for the Window be Changed to Top.
+Capture whole window include title and border parts, or client window region only.
 
-TIPS: You can using FindWindowLike to find the HWND.
+TIPS: Use FindWindowLike to find the HWND.
 
-  flag = 0 : All the window is capture (with border)
-  flag = 1 : Only the Client window is capture
+  $flag = 0 : Entire window will be captured (with border)
+  $flag = 1 : Only the client window region will be captured.
 
-=item CaptureWindowRect( $HWND , $sec , $x, $y, $width, $height )
+=item CaptureWindowRect($HWND, $sleepTime, $x, $y, $width, $height)
 
-Captures a part of the window. Pass the window handle with the function
-parameter. The second parameter is how many time wait for the Window be
-Changed to Top.
+Capture a portion of the window.
 
-TIPS: You can using FindWindowLike to find the HWND element(s).
+TIPS: Use FindWindowLike helper function to find $HWND value.
 
 =back
 
-=head2 Capturing helper functions
-
-Functions for find the Window HWND to capture.
+=head2 Capturing helper function
 
 =over 8
 
-=item FindWindowLike( $pattern )
+=item FindWindowLike($pattern)
 
-  @WIN = FindWindowLike('CPAN');
+  @hwnds = FindWindowLike('CPAN');
 
-  if($#WIN<0) {
+  if ($#hwnds<0) {
        print "Not found";
-  }else{
-        foreach(@WIN) {
-            my $image = CaptureWindowRect($_,2,0,0,400,300);
-            $image->SaveToFile("$_.jpg",JPEG_QUALITYSUPERB);
+  } else {
+        foreach (@hwnds) {
+            my $image = CaptureWindowRect($_, 2, 0, 0, 400, 300);
+            $image->SaveToFile("$_.jpg", JPEG_QUALITYSUPERB);
         }
   }
 
-The parameter is a part of window title, and FindWindowLike will Return
-an Array including HWND.
+The $pattern argument stands for a part of window title. FindWindowLike will return an array with HWND elements.
 
 =back
 
