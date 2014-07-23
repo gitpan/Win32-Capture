@@ -7,7 +7,7 @@ our @EXPORT = qw(CaptureScreen CaptureRect CaptureWindow CaptureWindowRect IsWin
 use Win32::API;
 use Win32::GUI::DIBitmap;
 
-$VERSION = '1.4';
+$VERSION = '1.5';
 
 BEGIN {
     $GetDC                 = new Win32::API('user32', 'GetDC', ['N'], 'N');
@@ -118,7 +118,7 @@ __END__
 
 =head1 NAME
 
-Win32::Capture - Capture screen and manipulate it with Win32::GUI::DIBitmap.
+Win32::Capture - Capture screen and manipulate it with Win32::GUI::DIBitmap instance.
 
 =head1 SYNOPSIS
 
@@ -134,12 +134,12 @@ Win32::Capture - Capture screen and manipulate it with Win32::GUI::DIBitmap.
 
   # or
 
-  @WIN = FindWindowLike('CPAN'); # Find the HWND to be captured.
+  @hwnds = FindWindowLike('CPAN');  # Invoke helper function to get HWND array.
 
-  if ($#WIN<0) {
+  if ($#hwnds<0) {
        print "Not found";
   } else {
-        foreach (@WIN) {
+        foreach (@hwnds) {
             my $image = CaptureWindowRect($_, 2, 0, 0, 400, 300);
             $image->SaveToFile("$_.jpg", JPEG_QUALITYSUPERB);
         }
@@ -147,13 +147,13 @@ Win32::Capture - Capture screen and manipulate it with Win32::GUI::DIBitmap.
 
 =head1 DESCRIPTION
 
-The functions of package are similar to L<Win32::Screenshot|Win32::Screenshot>.
-But you can manipulate screen shot image with L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap>
+The purposes of package are similar to L<Win32::Screenshot|Win32::Screenshot>.
+But you can manipulate screen shot image with L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap> instance.
 
 =head2 Screen capture functions
 
 All of these functions are returning a new L<Win32::GUI::DIBitmap|Win32::GUI::DIBitmap> instance
-on success or undef on failure. These functions are exported by default.
+on success or undef (a.k.a undefined variables) on failure. All functions are exported by default.
 
 =over 8
 
@@ -167,20 +167,22 @@ of the rectangle to be captured.
 
 Capture whole screen include taskbar.
 
-=item CaptureWindow($HWND, $sleepTime, $flag)
+=item CaptureWindow($hWND, $dur, $flag)
 
-Capture whole window include title and border parts, or client window region only.
+Capture whole window include title bar and window border, or client window region only.
 
-TIPS: Use FindWindowLike helper function to find $HWND value.
+Set $dur to wait for a while before capturing.
+
+TIPS: Invoke FindWindowLike($text) helper function to find $hWND value.
 
   $flag = 0 : Entire window will be captured (with border)
   $flag = 1 : Only client window region will be captured.
 
-=item CaptureWindowRect($HWND, $sleepTime, $x, $y, $width, $height)
+=item CaptureWindowRect($hWND, $dur, $x, $y, $width, $height)
 
 Capture a portion of the window.
 
-TIPS: Use FindWindowLike helper function to find $HWND value.
+TIPS: Invoke FindWindowLike($text) helper function to find $hWND value.
 
 =back
 
@@ -188,7 +190,7 @@ TIPS: Use FindWindowLike helper function to find $HWND value.
 
 =over 8
 
-=item FindWindowLike($pattern)
+=item FindWindowLike($text)
 
   @hwnds = FindWindowLike('CPAN');
 
@@ -201,7 +203,7 @@ TIPS: Use FindWindowLike helper function to find $HWND value.
         }
   }
 
-The $pattern argument stands for a part of window title. FindWindowLike will return an array with HWND elements.
+The $text argument stands for a part of window title. FindWindowLike will return an array holds HWND elements.
 
 =back
 
@@ -215,8 +217,9 @@ Some documentation refer from here.
 
 =item Win32::GUI::DIBitmap
 
-The raw data from the screen are loaded into Win32::GUI::DIBitmap object.
-You have a lot of possibilities what to do with the captured image.
+The raw data from the screen will be loaded into Win32::GUI::DIBitmap instance.
+
+See Win32::GUI::DIBitmap for more details.
 
 =item MSDN
 
@@ -230,7 +233,7 @@ Lilo Huang
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006 by Lilo Huang All Rights Reserved.
+Copyright 2014 by Lilo Huang All Rights Reserved.
 
 You can use this module under the same terms as Perl itself.
 
